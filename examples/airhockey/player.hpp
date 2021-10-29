@@ -9,6 +9,8 @@
 class OpenGLWindow;
 // class StarLayers;
 
+enum class Type { P1, P2 };
+
 class Player {
  public:
   void initializeGL(GLuint program);
@@ -33,11 +35,13 @@ class Player {
   GLuint m_vbo{};
   // GLuint m_ebo{};
 
-  glm::vec4 m_color{1};
+  Type m_type{Type::P1};
+
+  glm::vec3 m_color{};
   // float m_rotation{};
   float m_scale{0.075f};
-  glm::vec2 m_translation{glm::vec2(0)};
-  glm::vec2 m_velocity{glm::vec2(0)};
+  glm::vec2 m_translation{};
+  glm::vec2 m_velocity{};
 
   int sides{20};
 
