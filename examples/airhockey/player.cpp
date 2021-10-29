@@ -16,15 +16,20 @@ void Player::initializeGL(GLuint program) {
   m_scaleLoc = abcg::glGetUniformLocation(m_program, "scale");
   m_translationLoc = abcg::glGetUniformLocation(m_program, "translation");
 
+  players.at(1).m_type = Type::P2;
+
   // m_rotation = 0.0f;
   // m_translation = glm::vec2(0);
-  m_velocity = glm::vec2(0);
-  if (m_type == Type::P1) {
-    m_color = glm::vec3(1, 0, 0);
-    m_translation = glm::vec2(-.75, 0);
-  } else {
-    m_color = glm::vec3(0, 0, 1);
-    m_translation = glm::vec2(.75, 0);
+
+  for (auto &plyr : players) {
+    plyr.m_velocity = glm::vec2(0);
+    if (plyr.m_type == Type::P1) {
+      plyr.m_color = glm::vec3(1, 0, 0);
+      plyr.m_translation = glm::vec2(-.75, 0);
+    } else {
+      plyr.m_color = glm::vec3(0, 0, 1);
+      plyr.m_translation = glm::vec2(.75, 0);
+    }
   }
 
   std::vector<glm::vec2> positions(0);
@@ -76,20 +81,22 @@ void Player::paintGL(const GameData &gameData) {
 
   abcg::glUseProgram(m_program);
 
-  abcg::glBindVertexArray(m_vao);
+  for (const auto &plyr : players) {
+    abcg::glBindVertexArray(m_vao);
 
-  abcg::glUniform1f(m_scaleLoc, m_scale);
-  abcg::glUniform2fv(m_translationLoc, 1, &m_translation.x);
+    abcg::glUniform1f(m_scaleLoc, m_scale);
+    abcg::glUniform2fv(m_translationLoc, 1, &plyr.m_translation.x);
 
-  auto color = glm::vec4{m_color, 1};
-  abcg::glUniform4fv(m_colorLoc, 1, &color.r);
-  abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, sides + 2);
+    auto color = glm::vec4{plyr.m_color, 1};
+    abcg::glUniform4fv(m_colorLoc, 1, &color.r);
+    abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, sides + 2);
 
-  color = glm::vec4{.4f * m_color, 1};
-  abcg::glUniform4fv(m_colorLoc, 1, &color.r);
-  abcg::glDrawArrays(GL_TRIANGLE_FAN, sides + 2, sides + 2);
+    color = glm::vec4{.4f * plyr.m_color, 1};
+    abcg::glUniform4fv(m_colorLoc, 1, &color.r);
+    abcg::glDrawArrays(GL_TRIANGLE_FAN, sides + 2, sides + 2);
 
-  abcg::glBindVertexArray(0);
+    abcg::glBindVertexArray(0);
+  }
 
   abcg::glUseProgram(0);
 }
@@ -102,47 +109,52 @@ void Player::terminateGL() {
 
 void Player::update(const GameData &gameData, float deltaTime) {
   if (gameData.m_state != State::Playing) return;
-  m_velocity = glm::vec2{0};
+  for (auto &plyr : players) {
+    plyr.m_velocity = glm::vec2{0};
 
-  if (m_type == Type::P1) {
-    if (gameData.m_input[static_cast<size_t>(Input::W)]) {
-      m_velocity += glm::vec2{0.0f, 1.0f};
+    if (plyr.m_type == Type::P1) {
+      if (gameData.m_input[static_cast<size_t>(Input::W)]) {
+        plyr.m_velocity += glm::vec2{0.0f, 1.0f};
+      }
+      if (gameData.m_input[static_cast<size_t>(Input::S)]) {
+        plyr.m_velocity += glm::vec2{0.0f, -1.0f};
+      }
+      if (gameData.m_input[static_cast<size_t>(Input::D)]) {
+        plyr.m_velocity += glm::vec2{1.0f, 0.0f};
+      }
+      if (gameData.m_input[static_cast<size_t>(Input::A)]) {
+        plyr.m_velocity += glm::vec2{-1.0f, 0.0f};
+      }
+    } else {
+      if (gameData.m_input[static_cast<size_t>(Input::Up)]) {
+        plyr.m_velocity += glm::vec2{0.0f, 1.0f};
+      }
+      if (gameData.m_input[static_cast<size_t>(Input::Down)]) {
+        plyr.m_velocity += glm::vec2{0.0f, -1.0f};
+      }
+      if (gameData.m_input[static_cast<size_t>(Input::Right)]) {
+        plyr.m_velocity += glm::vec2{1.0f, 0.0f};
+      }
+      if (gameData.m_input[static_cast<size_t>(Input::Left)]) {
+        plyr.m_velocity += glm::vec2{-1.0f, 0.0f};
+      }
     }
-    if (gameData.m_input[static_cast<size_t>(Input::S)]) {
-      m_velocity += glm::vec2{0.0f, -1.0f};
-    }
-    if (gameData.m_input[static_cast<size_t>(Input::D)]) {
-      m_velocity += glm::vec2{1.0f, 0.0f};
-    }
-    if (gameData.m_input[static_cast<size_t>(Input::A)]) {
-      m_velocity += glm::vec2{-1.0f, 0.0f};
-    }
-  } else {
-    if (gameData.m_input[static_cast<size_t>(Input::Up)]) {
-      m_velocity += glm::vec2{0.0f, 1.0f};
-    }
-    if (gameData.m_input[static_cast<size_t>(Input::Down)]) {
-      m_velocity += glm::vec2{0.0f, -1.0f};
-    }
-    if (gameData.m_input[static_cast<size_t>(Input::Right)]) {
-      m_velocity += glm::vec2{1.0f, 0.0f};
-    }
-    if (gameData.m_input[static_cast<size_t>(Input::Left)]) {
-      m_velocity += glm::vec2{-1.0f, 0.0f};
-    }
+
+    if (plyr.m_velocity != glm::vec2{0})
+      plyr.m_velocity = glm::normalize(plyr.m_velocity) * deltaTime;
+
+    plyr.m_translation += plyr.m_velocity;
+    if (plyr.m_type == Type::P1)
+      plyr.m_translation.x =
+          std::clamp(plyr.m_translation.x, -.9f + m_scale, -.1f - m_scale);
+    else
+      plyr.m_translation.x =
+          std::clamp(plyr.m_translation.x, .1f + m_scale, .9f - m_scale);
+
+    plyr.m_translation.y =
+        std::clamp(plyr.m_translation.y, -.9f + m_scale, .9f - m_scale);
+    // fmt::print("{} - p:({},{}), v:{},{})\n", plyr.m_type,
+    // plyr.m_translation.x,
+    //            plyr.m_translation.y, plyr.m_velocity.x, plyr.m_velocity.y);
   }
-
-  if (m_velocity != glm::vec2{0})
-    m_velocity = glm::normalize(m_velocity) * deltaTime;
-
-  m_translation += m_velocity;
-  if (m_type == Type::P1)
-    m_translation.x =
-        std::clamp(m_translation.x, -.9f + m_scale, -.1f - m_scale);
-  else
-    m_translation.x = std::clamp(m_translation.x, .1f + m_scale, .9f - m_scale);
-
-  m_translation.y = std::clamp(m_translation.y, -.9f + m_scale, .9f - m_scale);
-  // fmt::print("p:({},{}), v:{},{})\n", m_translation.x, m_translation.y,
-  //            m_velocity.x, m_velocity.y);
 }

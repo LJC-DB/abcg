@@ -35,13 +35,16 @@ class Player {
   GLuint m_vbo{};
   // GLuint m_ebo{};
 
-  Type m_type{Type::P1};
+  struct Plyr {
+    Type m_type{Type::P1};
+    glm::vec3 m_color{};
+    glm::vec2 m_translation{};
+    glm::vec2 m_velocity{};
+  };
 
-  glm::vec3 m_color{};
-  // float m_rotation{};
+  std::array<Plyr, 2> players{};
+
   float m_scale{0.075f};
-  glm::vec2 m_translation{};
-  glm::vec2 m_velocity{};
 
   int sides{20};
 
