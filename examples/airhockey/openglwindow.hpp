@@ -9,6 +9,7 @@
 // #include "gamedata.hpp"
 #include "board.hpp"
 #include "player.hpp"
+#include "puck.hpp"
 // #include "bullets.hpp"
 // #include "ship.hpp"
 // #include "starlayers.hpp"
@@ -32,6 +33,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   Player m_player;
   Board m_board;
+  Puck m_puck;
   // Asteroids m_asteroids;
   // Bullets m_bullets;
   // Ship m_ship;

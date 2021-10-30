@@ -66,6 +66,7 @@ void OpenGLWindow::restart() {
   m_gameData.m_state = State::Playing;
 
   m_player.initializeGL(m_objectsProgram);
+  m_puck.initializeGL(m_objectsProgram);
   m_board.initializeGL(m_objectsProgram);
   // m_starLayers.initializeGL(m_starsProgram, 25);
   // m_ship.initializeGL(m_objectsProgram);
@@ -84,6 +85,7 @@ void OpenGLWindow::update() {
   }
 
   m_player.update(m_gameData, deltaTime);
+  m_puck.update(m_gameData, deltaTime);
   // m_ship.update(m_gameData, deltaTime);
   // m_starLayers.update(m_ship, deltaTime);
   // m_asteroids.update(m_ship, deltaTime);
@@ -102,6 +104,7 @@ void OpenGLWindow::paintGL() {
   abcg::glViewport(0, 0, m_viewportWidth, m_viewportHeight);
 
   m_player.paintGL(m_gameData);
+  m_puck.paintGL(m_gameData);
   m_board.paintGL(m_gameData);
   // m_starLayers.paintGL();
   // m_asteroids.paintGL();
@@ -144,6 +147,7 @@ void OpenGLWindow::terminateGL() {
   abcg::glDeleteProgram(m_objectsProgram);
 
   m_player.terminateGL();
+  m_puck.terminateGL();
   m_board.terminateGL();
   // m_asteroids.terminateGL();
   // m_bullets.terminateGL();
