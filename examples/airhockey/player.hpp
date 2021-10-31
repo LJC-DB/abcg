@@ -7,6 +7,7 @@
 // class Asteroids;
 // class Bullets;
 class OpenGLWindow;
+class Puck;
 // class StarLayers;
 
 enum class Type { P1, P2 };
@@ -23,6 +24,7 @@ class Player {
   // friend Asteroids;
   // friend Bullets;
   friend OpenGLWindow;
+  friend Puck;
   // friend StarLayers;
 
   GLuint m_program{};

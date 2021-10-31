@@ -83,7 +83,62 @@ void Puck::terminateGL() {
   abcg::glDeleteVertexArrays(1, &m_vao);
 }
 
-void Puck::update(const GameData &gameData, float deltaTime) {
+void Puck::update(Player &m_player, const GameData &gameData, float deltaTime) {
   if (gameData.m_state != State::Playing) return;
   if (m_velocity == glm::vec2{0}) return;
+
+  float diff{};
+
+  m_translation += m_velocity * deltaTime;
+  // fmt::print("p:({},{}), v:{},{})\n", m_translation.x, m_translation.y,
+  // m_velocity.x, m_velocity.y);
+  diff = abs(m_translation.x) + m_scale - .9f;
+  if (diff >= 0) {
+    m_velocity.x *= -1;
+    m_translation.x =
+        std::clamp(m_translation.x, -.9f + m_scale, .9f - m_scale);
+    m_translation.x += copysign(diff, m_velocity.x);
+  }
+
+  diff = abs(m_translation.y) + m_scale - .9f;
+  if (diff >= 0) {
+    m_velocity.y *= -1;
+    m_translation.y =
+        std::clamp(m_translation.y, -.9f + m_scale, .9f - m_scale);
+    m_translation.y += copysign(diff, m_velocity.y);
+  }
+
+  for (auto &plyr : m_player.players) {
+    auto dist{glm::distance(m_translation, plyr.m_translation)};
+    auto rdist{m_scale + m_player.m_scale};
+    if (dist <= rdist) {
+      auto n = glm::normalize(m_translation - plyr.m_translation);
+      // auto t{glm::vec2(-n.y, n.x)};
+
+      // auto dt = glm::dot(m_velocity, t);
+      // auto dn = glm::dot(m_velocity, n);
+
+      // m_velocity = t * dt - n * dn;
+
+      m_velocity = glm::reflect(m_velocity, n);
+
+      auto cp{n * rdist + plyr.m_translation};
+
+      m_translation = cp + (rdist - dist) * glm::normalize(m_velocity);
+
+      m_velocity += plyr.m_velocity;
+      // m_velocity *= .9;
+    }
+    if (m_velocity.x == 0) m_velocity.x = copysign(.1f, m_velocity.y);
+    auto v{glm::length(m_velocity)};
+    if (v > 2.0f)
+      m_velocity = glm::normalize(m_velocity) * 2.0f;
+    else if (v < .1f)
+      m_velocity = glm::normalize(m_velocity) * .1f;
+  }
+
+  // fmt::print("({},{})\n", diff_x, diff_y);
+  // m_translation.x = std::clamp(m_translation.x, -.9f + m_scale, -.1f -
+  // m_scale); m_translation.y = std::clamp(m_translation.y, -.9f + m_scale, .9f
+  // - m_scale);
 }

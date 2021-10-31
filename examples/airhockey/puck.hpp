@@ -3,6 +3,7 @@
 
 #include "abcg.hpp"
 #include "gamedata.hpp"
+#include "player.hpp"
 
 // class Asteroids;
 // class Bullets;
@@ -15,7 +16,7 @@ class Puck {
   void paintGL(const GameData &gameData);
   void terminateGL();
 
-  void update(const GameData &gameData, float deltaTime);
+  void update(Player &m_player, const GameData &gameData, float deltaTime);
 
  private:
   // friend Asteroids;

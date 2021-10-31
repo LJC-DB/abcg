@@ -141,9 +141,9 @@ void Player::update(const GameData &gameData, float deltaTime) {
     }
 
     if (plyr.m_velocity != glm::vec2{0})
-      plyr.m_velocity = glm::normalize(plyr.m_velocity) * deltaTime;
+      plyr.m_velocity = glm::normalize(plyr.m_velocity);
 
-    plyr.m_translation += plyr.m_velocity;
+    plyr.m_translation += plyr.m_velocity * deltaTime;
     if (plyr.m_type == Type::P1)
       plyr.m_translation.x =
           std::clamp(plyr.m_translation.x, -.9f + m_scale, -.1f - m_scale);

@@ -85,7 +85,7 @@ void OpenGLWindow::update() {
   }
 
   m_player.update(m_gameData, deltaTime);
-  m_puck.update(m_gameData, deltaTime);
+  m_puck.update(m_player, m_gameData, deltaTime);
   // m_ship.update(m_gameData, deltaTime);
   // m_starLayers.update(m_ship, deltaTime);
   // m_asteroids.update(m_ship, deltaTime);
