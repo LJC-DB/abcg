@@ -9,6 +9,8 @@
 
 void Puck::initializeGL(GLuint program) {
   terminateGL();
+  auto &re{m_randomEngine};
+  std::uniform_real_distribution<float> initialVelocity(-.5f, .5f);
 
   m_program = program;
   m_colorLoc = abcg::glGetUniformLocation(m_program, "color");
@@ -17,7 +19,7 @@ void Puck::initializeGL(GLuint program) {
   m_translationLoc = abcg::glGetUniformLocation(m_program, "translation");
 
   m_translation = glm::vec2{0};
-  m_velocity = glm::vec2{.5, .4};
+  m_velocity = glm::vec2{initialVelocity(re), initialVelocity(re)};
 
   std::vector<glm::vec2> positions(0);
   positions.emplace_back(0, 0);

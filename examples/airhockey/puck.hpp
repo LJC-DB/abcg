@@ -1,6 +1,8 @@
 #ifndef PUCK_HPP_
 #define PUCK_HPP_
 
+#include <random>
+
 #include "abcg.hpp"
 #include "gamedata.hpp"
 #include "player.hpp"
@@ -39,6 +41,8 @@ class Puck {
   float m_scale{.04f};
   glm::vec2 m_translation{};
   glm::vec2 m_velocity{};
+
+  std::default_random_engine m_randomEngine;
 
   int sides{20};
 
