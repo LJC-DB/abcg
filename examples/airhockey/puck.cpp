@@ -16,6 +16,9 @@ void Puck::initializeGL(GLuint program) {
   m_scaleLoc = abcg::glGetUniformLocation(m_program, "scale");
   m_translationLoc = abcg::glGetUniformLocation(m_program, "translation");
 
+  m_translation = glm::vec2{0};
+  m_velocity = glm::vec2{.5, .4};
+
   std::vector<glm::vec2> positions(0);
   positions.emplace_back(0, 0);
   const auto step{M_PI * 2 / sides};
@@ -93,7 +96,9 @@ void Puck::update(Player &m_player, const GameData &gameData, float deltaTime) {
   // fmt::print("p:({},{}), v:{},{})\n", m_translation.x, m_translation.y,
   // m_velocity.x, m_velocity.y);
   diff = abs(m_translation.x) + m_scale - .9f;
-  if (diff >= 0) {
+  auto pos_y = abs(m_translation.y) + m_scale;
+
+  if (diff >= 0 && pos_y >= .3f) {
     m_velocity.x *= -1;
     m_translation.x =
         std::clamp(m_translation.x, -.9f + m_scale, .9f - m_scale);

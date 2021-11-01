@@ -41,9 +41,11 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   abcg::ElapsedTimer m_restartWaitTimer;
 
+  ImFont* m_font{};
+
   std::default_random_engine m_randomEngine;
 
-  void checkCollisions();
+  void checkGoals();
   void checkWinCondition();
 
   void restart();

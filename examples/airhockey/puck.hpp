@@ -38,7 +38,7 @@ class Puck {
   // float m_rotation{};
   float m_scale{.04f};
   glm::vec2 m_translation{};
-  glm::vec2 m_velocity{glm::vec2{.2, .3}};
+  glm::vec2 m_velocity{};
 
   int sides{20};
 

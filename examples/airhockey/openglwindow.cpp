@@ -1,6 +1,10 @@
 #include "openglwindow.hpp"
 
+#include <fmt/core.h>
 #include <imgui.h>
+
+#include <cppitertools/itertools.hpp>
+#include <string>
 
 #include "abcg.hpp"
 
@@ -45,6 +49,14 @@ void OpenGLWindow::handleEvent(SDL_Event &event) {
 }
 
 void OpenGLWindow::initializeGL() {
+  // Load a new font
+  ImGuiIO &io{ImGui::GetIO()};
+  auto filename{getAssetsPath() + "Inconsolata-Medium.ttf"};
+  m_font = io.Fonts->AddFontFromFileTTF(filename.c_str(), 60.0f);
+  if (m_font == nullptr) {
+    throw abcg::Exception{abcg::Exception::Runtime("Cannot load font file")};
+  }
+
   // Create program to render the other objects
   m_objectsProgram = createProgramFromFile(getAssetsPath() + "objects.vert",
                                            getAssetsPath() + "objects.frag");
@@ -80,6 +92,7 @@ void OpenGLWindow::update() {
   // Wait 5 seconds before restarting
   if (m_gameData.m_state != State::Playing &&
       m_restartWaitTimer.elapsed() > 5) {
+    m_gameData.m_score.fill(0);
     restart();
     return;
   }
@@ -92,7 +105,7 @@ void OpenGLWindow::update() {
   // m_bullets.update(m_ship, m_gameData, deltaTime);
 
   if (m_gameData.m_state == State::Playing) {
-    checkCollisions();
+    checkGoals();
     checkWinCondition();
   }
 }
@@ -116,22 +129,38 @@ void OpenGLWindow::paintUI() {
   abcg::OpenGLWindow::paintUI();
 
   {
-    const auto size{ImVec2(300, 85)};
-    const auto position{ImVec2((m_viewportWidth - size.x) / 2.0f,
-                               (m_viewportHeight - size.y) / 2.0f)};
+    ImVec2 size;
+    ImVec2 position;
+    if (m_gameData.m_state == State::Playing) {
+      size = ImVec2(180, 80);
+      position = ImVec2((m_viewportWidth - size.x) / 2.0f,
+                        (m_viewportHeight - size.y) / 4.0f);
+    } else {
+      size = ImVec2(400, 85);
+      position = ImVec2((m_viewportWidth - size.x) / 2.0f,
+                        (m_viewportHeight - size.y) / 2.0f);
+    }
+
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size);
     ImGuiWindowFlags flags{ImGuiWindowFlags_NoBackground |
                            ImGuiWindowFlags_NoTitleBar |
                            ImGuiWindowFlags_NoInputs};
     ImGui::Begin(" ", nullptr, flags);
+    ImGui::PushFont(m_font);
 
-    if (m_gameData.m_state == State::GameOver) {
-      ImGui::Text("Game Over!");
-    } else if (m_gameData.m_state == State::Win) {
-      ImGui::Text("*You Win!*");
+    if (m_gameData.m_state == State::WinP1) {
+      ImGui::Text("Player 1 Wins!");
+    } else if (m_gameData.m_state == State::WinP2) {
+      ImGui::Text("Player 2 Wins!");
+    } else {
+      std::string text = std::to_string(m_gameData.m_score.at(0)) +
+                         std::string("    ") +
+                         std::to_string(m_gameData.m_score.at(1));
+      ImGui::Text(text.c_str());
     }
 
+    ImGui::PopFont();
     ImGui::End();
   }
 }
@@ -155,11 +184,27 @@ void OpenGLWindow::terminateGL() {
   // m_starLayers.terminateGL();
 }
 
-void OpenGLWindow::checkCollisions() {}
+void OpenGLWindow::checkGoals() {
+  auto pos_x = abs(m_puck.m_translation.x) + m_puck.m_scale;
+  auto pos_y = abs(m_puck.m_translation.y) + m_puck.m_scale;
+  if (pos_x >= .9f && pos_y < .3f) {
+    if (m_puck.m_translation.x > 0)
+      m_gameData.m_score.at(0)++;
+    else
+      m_gameData.m_score.at(1)++;
+    restart();
+  }
+}
 
 void OpenGLWindow::checkWinCondition() {
-  if (false) {
-    m_gameData.m_state = State::Win;
+  // fmt::print("{} - {}\n", m_gameData.m_score.at(0),
+  // m_gameData.m_score.at(1));
+  if (std::any_of(std::begin(m_gameData.m_score), std::end(m_gameData.m_score),
+                  [=](int n) { return n >= 5; })) {
+    if (m_gameData.m_score.at(0) >= 5)
+      m_gameData.m_state = State::WinP1;
+    else
+      m_gameData.m_state = State::WinP2;
     m_restartWaitTimer.restart();
   }
 }
