@@ -127,7 +127,8 @@ void Puck::update(Player &m_player, const GameData &gameData, float deltaTime) {
 
       // m_velocity = t * dt - n * dn;
 
-      m_velocity = glm::reflect(m_velocity, n);
+      if (glm::dot(m_velocity, n) <= 0)
+        m_velocity = glm::reflect(m_velocity, n);
 
       auto cp{n * rdist + plyr.m_translation};
 
