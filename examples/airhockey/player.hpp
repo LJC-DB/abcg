@@ -4,11 +4,8 @@
 #include "abcg.hpp"
 #include "gamedata.hpp"
 
-// class Asteroids;
-// class Bullets;
 class OpenGLWindow;
 class Puck;
-// class StarLayers;
 
 enum class Type { P1, P2 };
 
@@ -21,21 +18,16 @@ class Player {
   void update(const GameData &gameData, float deltaTime);
 
  private:
-  // friend Asteroids;
-  // friend Bullets;
   friend OpenGLWindow;
   friend Puck;
-  // friend StarLayers;
 
   GLuint m_program{};
   GLint m_translationLoc{};
   GLint m_colorLoc{};
   GLint m_scaleLoc{};
-  // GLint m_rotationLoc{};
 
   GLuint m_vao{};
   GLuint m_vbo{};
-  // GLuint m_ebo{};
 
   struct Plyr {
     Type m_type{Type::P1};
@@ -49,9 +41,6 @@ class Player {
   float m_scale{0.075f};
 
   int sides{20};
-
-  // abcg::ElapsedTimer m_trailBlinkTimer;
-  // abcg::ElapsedTimer m_bulletCoolDownTimer;
 };
 
 #endif

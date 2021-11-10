@@ -1,10 +1,5 @@
 #include "board.hpp"
 
-#include <fmt/core.h>
-
-#include <cppitertools/itertools.hpp>
-#include <glm/gtx/fast_trigonometry.hpp>
-#include <glm/gtx/rotate_vector.hpp>
 #include <vector>
 
 void Board::initializeGL(GLuint program) {
@@ -12,7 +7,6 @@ void Board::initializeGL(GLuint program) {
 
   m_program = program;
   m_colorLoc = abcg::glGetUniformLocation(m_program, "color");
-  // m_rotationLoc = abcg::glGetUniformLocation(m_program, "rotation");
   m_scaleLoc = abcg::glGetUniformLocation(m_program, "scale");
   m_translationLoc = abcg::glGetUniformLocation(m_program, "translation");
 
@@ -36,7 +30,6 @@ void Board::initializeGL(GLuint program) {
       glm::vec2{1, 1},     glm::vec2{1, .9f},
   };
 
-  // std::vector<glm::vec2> indices(0);
   std::array<int, 36> indices{0};
   for (size_t i = 0; i < 6; i++) {
     auto x = i * 6;
@@ -48,9 +41,6 @@ void Board::initializeGL(GLuint program) {
     indices.at(x + 4) = y + 2;
     indices.at(x + 5) = y + 3;
   }
-
-  // for (const auto i : indices)
-  //   fmt::print("{} - ({},{})\n", i, positions.at(i).x, positions.at(i).y);
 
   // Generate VBO
   abcg::glGenBuffers(1, &m_vbo);
@@ -98,7 +88,6 @@ void Board::paintGL(const GameData &gameData) {
   abcg::glUniform2fv(m_translationLoc, 1, &m_translation.x);
 
   abcg::glUniform4fv(m_colorLoc, 1, &m_color.r);
-  // abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, sides + 2);
   abcg::glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
 
   abcg::glBindVertexArray(0);
@@ -111,5 +100,3 @@ void Board::terminateGL() {
   abcg::glDeleteBuffers(1, &m_ebo);
   abcg::glDeleteVertexArrays(1, &m_vao);
 }
-
-// void Board::update(const GameData &gameData, float deltaTime) {}

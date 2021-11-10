@@ -1,9 +1,7 @@
 #include "openglwindow.hpp"
 
-#include <fmt/core.h>
 #include <imgui.h>
 
-#include <cppitertools/itertools.hpp>
 #include <string>
 
 #include "abcg.hpp"
@@ -80,10 +78,6 @@ void OpenGLWindow::restart() {
   m_player.initializeGL(m_objectsProgram);
   m_puck.initializeGL(m_objectsProgram);
   m_board.initializeGL(m_objectsProgram);
-  // m_starLayers.initializeGL(m_starsProgram, 25);
-  // m_ship.initializeGL(m_objectsProgram);
-  // m_asteroids.initializeGL(m_objectsProgram, 3);
-  // m_bullets.initializeGL(m_objectsProgram);
 }
 
 void OpenGLWindow::update() {
@@ -99,10 +93,6 @@ void OpenGLWindow::update() {
 
   m_player.update(m_gameData, deltaTime);
   m_puck.update(m_player, m_gameData, deltaTime);
-  // m_ship.update(m_gameData, deltaTime);
-  // m_starLayers.update(m_ship, deltaTime);
-  // m_asteroids.update(m_ship, deltaTime);
-  // m_bullets.update(m_ship, m_gameData, deltaTime);
 
   if (m_gameData.m_state == State::Playing) {
     checkGoals();
@@ -119,10 +109,6 @@ void OpenGLWindow::paintGL() {
   m_player.paintGL(m_gameData);
   m_puck.paintGL(m_gameData);
   m_board.paintGL(m_gameData);
-  // m_starLayers.paintGL();
-  // m_asteroids.paintGL();
-  // m_bullets.paintGL();
-  // m_ship.paintGL(m_gameData);
 }
 
 void OpenGLWindow::paintUI() {
@@ -178,10 +164,6 @@ void OpenGLWindow::terminateGL() {
   m_player.terminateGL();
   m_puck.terminateGL();
   m_board.terminateGL();
-  // m_asteroids.terminateGL();
-  // m_bullets.terminateGL();
-  // m_ship.terminateGL();
-  // m_starLayers.terminateGL();
 }
 
 void OpenGLWindow::checkGoals() {
@@ -197,8 +179,6 @@ void OpenGLWindow::checkGoals() {
 }
 
 void OpenGLWindow::checkWinCondition() {
-  // fmt::print("{} - {}\n", m_gameData.m_score.at(0),
-  // m_gameData.m_score.at(1));
   if (std::any_of(std::begin(m_gameData.m_score), std::end(m_gameData.m_score),
                   [=](int n) { return n >= 5; })) {
     if (m_gameData.m_score.at(0) >= 5)

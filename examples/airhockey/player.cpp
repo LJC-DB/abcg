@@ -1,10 +1,6 @@
 #include "player.hpp"
 
-#include <fmt/core.h>
-
 #include <cppitertools/itertools.hpp>
-#include <glm/gtx/fast_trigonometry.hpp>
-#include <glm/gtx/rotate_vector.hpp>
 #include <vector>
 
 void Player::initializeGL(GLuint program) {
@@ -12,14 +8,10 @@ void Player::initializeGL(GLuint program) {
 
   m_program = program;
   m_colorLoc = abcg::glGetUniformLocation(m_program, "color");
-  // m_rotationLoc = abcg::glGetUniformLocation(m_program, "rotation");
   m_scaleLoc = abcg::glGetUniformLocation(m_program, "scale");
   m_translationLoc = abcg::glGetUniformLocation(m_program, "translation");
 
   players.at(1).m_type = Type::P2;
-
-  // m_rotation = 0.0f;
-  // m_translation = glm::vec2(0);
 
   for (auto &plyr : players) {
     plyr.m_velocity = glm::vec2(0);
@@ -45,10 +37,6 @@ void Player::initializeGL(GLuint program) {
     positions.emplace_back(.4 * std::cos(angle), .4 * std::sin(angle));
   }
   positions.push_back(positions.at(sides + 3));
-
-  // for (const auto p : positions) {
-  //   fmt::print("({},{})\n", p.x, p.y);
-  // }
 
   // Generate VBO
   abcg::glGenBuffers(1, &m_vbo);
@@ -103,7 +91,6 @@ void Player::paintGL(const GameData &gameData) {
 
 void Player::terminateGL() {
   abcg::glDeleteBuffers(1, &m_vbo);
-  // abcg::glDeleteBuffers(1, &m_ebo);
   abcg::glDeleteVertexArrays(1, &m_vao);
 }
 
@@ -153,8 +140,5 @@ void Player::update(const GameData &gameData, float deltaTime) {
 
     plyr.m_translation.y =
         std::clamp(plyr.m_translation.y, -.9f + m_scale, .9f - m_scale);
-    // fmt::print("{} - p:({},{}), v:{},{})\n", plyr.m_type,
-    // plyr.m_translation.x,
-    //            plyr.m_translation.y, plyr.m_velocity.x, plyr.m_velocity.y);
   }
 }

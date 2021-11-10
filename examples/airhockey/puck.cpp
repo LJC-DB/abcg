@@ -1,10 +1,6 @@
 #include "puck.hpp"
 
-#include <fmt/core.h>
-
 #include <cppitertools/itertools.hpp>
-#include <glm/gtx/fast_trigonometry.hpp>
-#include <glm/gtx/rotate_vector.hpp>
 #include <vector>
 
 void Puck::initializeGL(GLuint program) {
@@ -14,7 +10,6 @@ void Puck::initializeGL(GLuint program) {
 
   m_program = program;
   m_colorLoc = abcg::glGetUniformLocation(m_program, "color");
-  // m_rotationLoc = abcg::glGetUniformLocation(m_program, "rotation");
   m_scaleLoc = abcg::glGetUniformLocation(m_program, "scale");
   m_translationLoc = abcg::glGetUniformLocation(m_program, "translation");
 
@@ -34,9 +29,6 @@ void Puck::initializeGL(GLuint program) {
     positions.emplace_back(.4 * std::cos(angle), .4 * std::sin(angle));
   }
   positions.push_back(positions.at(sides + 3));
-
-  // for (const auto i : indices)
-  //   fmt::print("{} - ({},{})\n", i, positions.at(i).x, positions.at(i).y);
 
   // Generate VBO
   abcg::glGenBuffers(1, &m_vbo);
@@ -76,7 +68,6 @@ void Puck::paintGL(const GameData &gameData) {
 
   abcg::glUniform4fv(m_colorLoc, 1, &m_color.r);
   abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, sides + 2);
-  // abcg::glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
 
   abcg::glBindVertexArray(0);
 
@@ -97,8 +88,6 @@ void Puck::update(Player &m_player, const GameData &gameData, float deltaTime) {
   float diff{};
 
   m_translation += m_velocity * deltaTime;
-  // fmt::print("p:({},{}), v:{},{})\n", m_translation.x, m_translation.y,
-  // m_velocity.x, m_velocity.y);
   diff = abs(m_translation.x) + m_scale - .9f;
   auto pos_y = abs(m_translation.y) + m_scale;
 
@@ -127,12 +116,6 @@ void Puck::update(Player &m_player, const GameData &gameData, float deltaTime) {
     if (dist <= rdist) {
       collided = true;
       auto n = glm::normalize(m_translation - plyr.m_translation);
-      // auto t{glm::vec2(-n.y, n.x)};
-
-      // auto dt = glm::dot(m_velocity, t);
-      // auto dn = glm::dot(m_velocity, n);
-
-      // m_velocity = t * dt - n * dn;
 
       if (glm::dot(m_velocity, n) <= 0)
         m_velocity = glm::reflect(m_velocity, n);
@@ -151,11 +134,7 @@ void Puck::update(Player &m_player, const GameData &gameData, float deltaTime) {
     else if (v < .2f)
       m_velocity = glm::normalize(m_velocity) * .2f;
   }
+
   if (collided == false)
     m_velocity -= glm::normalize(m_velocity) * .1f * deltaTime;
-
-  // fmt::print("({},{})\n", diff_x, diff_y);
-  // m_translation.x = std::clamp(m_translation.x, -.9f + m_scale, -.1f -
-  // m_scale); m_translation.y = std::clamp(m_translation.y, -.9f + m_scale, .9f
-  // - m_scale);
 }
