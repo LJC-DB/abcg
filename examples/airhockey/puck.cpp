@@ -92,6 +92,8 @@ void Puck::update(Player &m_player, const GameData &gameData, float deltaTime) {
   if (gameData.m_state != State::Playing) return;
   if (m_velocity == glm::vec2{0}) return;
 
+  bool collided{false};
+
   float diff{};
 
   m_translation += m_velocity * deltaTime;
@@ -101,24 +103,29 @@ void Puck::update(Player &m_player, const GameData &gameData, float deltaTime) {
   auto pos_y = abs(m_translation.y) + m_scale;
 
   if (diff >= 0 && pos_y >= .3f) {
+    collided = true;
     m_velocity.x *= -1;
     m_translation.x =
         std::clamp(m_translation.x, -.9f + m_scale, .9f - m_scale);
     m_translation.x += copysign(diff, m_velocity.x);
+    m_velocity *= .95;
   }
 
   diff = abs(m_translation.y) + m_scale - .9f;
   if (diff >= 0) {
+    collided = true;
     m_velocity.y *= -1;
     m_translation.y =
         std::clamp(m_translation.y, -.9f + m_scale, .9f - m_scale);
     m_translation.y += copysign(diff, m_velocity.y);
+    m_velocity *= .95;
   }
 
   for (auto &plyr : m_player.players) {
     auto dist{glm::distance(m_translation, plyr.m_translation)};
     auto rdist{m_scale + m_player.m_scale};
     if (dist <= rdist) {
+      collided = true;
       auto n = glm::normalize(m_translation - plyr.m_translation);
       // auto t{glm::vec2(-n.y, n.x)};
 
@@ -135,15 +142,17 @@ void Puck::update(Player &m_player, const GameData &gameData, float deltaTime) {
       m_translation = cp + (rdist - dist) * glm::normalize(m_velocity);
 
       m_velocity += plyr.m_velocity;
-      // m_velocity *= .9;
+      m_velocity *= .95;
     }
     if (m_velocity.x == 0) m_velocity.x = copysign(.1f, m_velocity.y);
     auto v{glm::length(m_velocity)};
     if (v > 2.0f)
       m_velocity = glm::normalize(m_velocity) * 2.0f;
-    else if (v < .1f)
-      m_velocity = glm::normalize(m_velocity) * .1f;
+    else if (v < .2f)
+      m_velocity = glm::normalize(m_velocity) * .2f;
   }
+  if (collided == false)
+    m_velocity -= glm::normalize(m_velocity) * .1f * deltaTime;
 
   // fmt::print("({},{})\n", diff_x, diff_y);
   // m_translation.x = std::clamp(m_translation.x, -.9f + m_scale, -.1f -
