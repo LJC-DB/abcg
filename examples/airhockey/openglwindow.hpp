@@ -3,8 +3,6 @@
 
 #include <imgui.h>
 
-#include <random>
-
 #include "abcg.hpp"
 #include "board.hpp"
 #include "player.hpp"
@@ -34,8 +32,6 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   abcg::ElapsedTimer m_restartWaitTimer;
 
   ImFont* m_font{};
-
-  std::default_random_engine m_randomEngine;
 
   void checkGoals();
   void checkWinCondition();

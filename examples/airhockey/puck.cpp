@@ -5,6 +5,11 @@
 
 void Puck::initializeGL(GLuint program) {
   terminateGL();
+
+  // Start pseudo-random number generator
+  m_randomEngine.seed(
+      std::chrono::steady_clock::now().time_since_epoch().count());
+
   auto &re{m_randomEngine};
   std::uniform_real_distribution<float> initialVelocity(-.5f, .5f);
 

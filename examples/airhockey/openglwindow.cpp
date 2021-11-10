@@ -65,10 +65,6 @@ void OpenGLWindow::initializeGL() {
   abcg::glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
 
-  // Start pseudo-random number generator
-  m_randomEngine.seed(
-      std::chrono::steady_clock::now().time_since_epoch().count());
-
   restart();
 }
 
