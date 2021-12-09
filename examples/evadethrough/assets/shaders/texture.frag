@@ -17,7 +17,7 @@ uniform float shininess;
 // Diffuse texture sampler
 uniform sampler2D diffuseTex;
 
-uniform int mappingMode;
+uniform mediump int mappingMode;
 
 out vec4 outColor;
 
@@ -49,14 +49,6 @@ vec4 BlinnPhong(vec3 N, vec3 L, vec3 V, vec2 texCoord) {
     map_Ka = map_Kd;
   }
 
-  // map_Kd = texture(diffuseTex, texCoord);
-  // map_Ka = map_Kd;
-
-
-  // vec4 diffuseColor =  Kd * Id * lambertian;
-  // vec4 specularColor = Ks * Is * specular;
-  // vec4 ambientColor =  Ka * Ia;
-
   vec4 diffuseColor = map_Kd * Kd * Id * lambertian;
   vec4 specularColor = Ks * Is * specular;
   vec4 ambientColor = map_Ka * Ka * Ia;
@@ -69,23 +61,9 @@ void main() {
   vec4 color;
   vec2 texCoord;
 
-  // if (mappingMode == 0) {
-  //   texCoord = fragTexCoord;
-  // } else {
-  //   texCoord = vec2(-1, -1);
-  // }
-
   texCoord = fragTexCoord;
 
   color = BlinnPhong(fragN, fragL, fragV, texCoord);
 
-
   outColor = color;
-
-  // if (gl_FrontFacing) {
-  //   outColor = color;
-  // } else {
-  //   float i = (color.r + color.g + color.b) / 3.0;
-  //   outColor = vec4(i, 0, 0, 1.0);
-  // }
 }

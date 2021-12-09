@@ -11,7 +11,7 @@ uniform mat3 normalMatrix;
 
 uniform vec4 lightPos;
 
-uniform int mappingMode;
+uniform mediump int mappingMode;
 
 
 out vec3 fragV;
