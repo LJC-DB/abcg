@@ -59,11 +59,10 @@ vec4 BlinnPhong(vec3 N, vec3 L, vec3 V, vec2 texCoord) {
 
   float dist = distance(wL, vec4(wP, 1.0));
 
-  float kc = 1;
+  float kc = 1.0;
   float kl = 0.05;
   float kq = 0.05;
-  float attenuation = 1 / (kc + kl*dist + kq*pow(dist,2));
-  // float attenuation = 0.00001;
+  float attenuation = 1.0 / (kc + kl*dist + kq*pow(dist,2.0));
 
   return attenuation * (ambientColor + diffuseColor + specularColor);
 }
