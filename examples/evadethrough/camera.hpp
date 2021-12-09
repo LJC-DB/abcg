@@ -11,6 +11,7 @@ class Camera {
   void computeViewMatrix();
   void computeProjectionMatrix(int width, int height);
   void update(float forwardspeed, float lateralspeed);
+  void reset() { m_at = glm::vec3(0.0f, 0.0f, 0.0f); }
 
  private:
   friend OpenGLWindow;

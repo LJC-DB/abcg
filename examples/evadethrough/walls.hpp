@@ -7,16 +7,21 @@
 class Walls {
  public:
   void initializeGL(GLuint program, std::string path);
-  void paintGL();
+  void paintGL(glm::mat4* viewMatrix);
   void terminateGL();
 
  private:
   Model m_model;
 
   GLint m_modelMatrixLoc{};
-  GLint m_colorLoc{};
+  GLint normalMatrixLoc;
+  GLint KaLoc;
+  GLint KdLoc;
+  GLint KsLoc;
+  GLint shininessLoc;
+  // GLint m_colorLoc{};
 
-  int len{4};
+  int len{35};
   int width{2};
 };
 
