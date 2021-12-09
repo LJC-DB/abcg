@@ -9,7 +9,7 @@ uniform mat4 viewMatrix;
 uniform mat4 projMatrix;
 uniform mat3 normalMatrix;
 
-uniform vec4 lightPos;
+uniform mediump vec4 lightPos;
 
 uniform mediump int mappingMode;
 
@@ -20,6 +20,8 @@ out vec3 fragN;
 out vec2 fragTexCoord;
 out vec3 fragPObj;
 out vec3 fragNObj;
+out vec4 wL;
+out vec3 wP;
 
 void main() {
   vec3 P = (viewMatrix * modelMatrix * vec4(inPosition, 1.0)).xyz;
@@ -28,7 +30,11 @@ void main() {
     N = normalMatrix * vec3(0.0, -1.0, 0.0);
   else
     N = normalMatrix * inNormal;
-  vec3 L = -(viewMatrix * (lightPos - (modelMatrix * vec4(inPosition, 1.0)))).xyz;
+  vec4 lP = viewMatrix * lightPos;
+  vec3 L = -(lP - vec4(P, 1.0)).xyz;
+
+  wL = lightPos;
+  wP = (modelMatrix * vec4(inPosition, 1.0)).xyz;
 
   fragL = L;
   fragV = -P;
